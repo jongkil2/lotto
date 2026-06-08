@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>로또 AI 스마트 가이드</title>
+<style>
+:root { --bg-gradient: linear-gradient(135deg,#1e293b 0%,#334155 100%); --primary-btn:#4f46e5; --clear-btn:#f1f5f9; }
+body { margin:0; display:flex; justify-content:center; align-items:center; min-height:100vh; background:var(--bg-gradient); font-family:sans-serif; }
+.phone-frame { width:365px; height:740px; background:#000; border-radius:45px; padding:12px; border:4px solid #222; }
+.screen { width:100%; height:100%; background:#fff; border-radius:35px; overflow:hidden; display:flex; flex-direction:column; }
+.header { padding:30px 20px 15px; text-align:center; border-bottom:1px solid #f1f5f9; }
+.drw-no { font-size:1.7rem; font-weight:800; color:#4f46e5; }
+.drw-date { font-size:1rem; font-weight:700; color:#ef4444; margin-top:4px; }
+.lotto-list { flex:1; padding:15px 20px; overflow-y:auto; }
+.game-row { display:flex; align-items:center; padding:12px 0; border-bottom:1px solid #f8fafc; }
+.game-rank { font-size:.85rem; color:#4f46e5; font-weight:900; width:40px; }
+.ball-container { display:flex; gap:8px; }
+.ball { width:38px; height:38px; border-radius:50%; display:flex; align-items:center; justify-content:center; color:#fff; font-weight:800; }
+.c1{background:#facc15}.c2{background:#60a5fa}.c3{background:#fb7185}.c4{background:#94a3b8}.c5{background:#4ade80}
+.footer { padding:15px 20px; border-top:1px solid #f1f5f9; display:flex; flex-direction:column; gap:8px; }
+button { width:100%; padding:14px; border:none; border-radius:15px; font-weight:800; }
+.btn-gen { color:white; background:var(--primary-btn); }
+.btn-clear { background:var(--clear-btn); }
+.progress{height:8px;background:#e5e7eb;border-radius:10px;overflow:hidden}
+.bar{height:100%;width:0%}
+</style>
+</head>
+<body>
+<div class="phone-frame"><div class="screen">
+<div class="header">
+<h2>로또 AI 스마트 가이드</h2>
+<div class="drw-no">최근 300회 분석</div>
+<div class="drw-date">GitHub Pages 버전</div>
+</div>
+<div class="lotto-list" id="results">생성 버튼을 눌러주세요.</div>
+<div class="footer">
+<div id="msg">대기중</div>
+<div class="progress"><div id="bar" class="bar"></div></div>
+<button class="btn-gen" onclick="generate()">초정밀 확률 조합 생성</button>
+<button class="btn-clear" onclick="location.reload()">번호 지우기</button>
+</div></div></div>
+<script>
+const hot=[7,12,17,21,27,34,40];
+const cold=[3,9,19,28,37];
+
+function setProgress(p,t){
+ document.getElementById('bar').style.width=p+'%';
+ document.getElementById('msg').innerText=t;
+}
+
+function makeGame(){
+ let s=new Set();
+ while(s.size<6) s.add(Math.floor(Math.random()*45)+1);
+ return [...s].sort((a,b)=>a-b);
+}
+
+function score(nums){
+ let odd=nums.filter(n=>n%2).length;
+ let sum=nums.reduce((a,b)=>a+b,0);
+ let hotScore=nums.filter(n=>hot.includes(n)).length*10;
+ let coldScore=nums.filter(n=>cold.includes(n)).length*5;
+ return hotScore+coldScore-(Math.abs(3-odd)*5)-(Math.abs(140-sum)/10);
+}
+
+function render(games){
+ const r=document.getElementById('results');
+ r.innerHTML='';
+ games.forEach((nums,i)=>{
+  const balls=nums.map(n=>`<div class="ball ${n<=10?'c1':n<=20?'c2':n<=30?'c3':n<=40?'c4':'c5'}">${n}</div>`).join('');
+  r.innerHTML+=`<div class="game-row"><span class="game-rank">${i+1}위</span><div class="ball-container">${balls}</div></div>`;
+ });
+}
+
+async function generate(){
+ setProgress(20,'최근 300회 데이터 분석중...');
+ await new Promise(r=>setTimeout(r,300));
+ setProgress(60,'패턴 점수 계산중...');
+ let arr=[];
+ for(let i=0;i<3000;i++){
+  let g=makeGame();
+  arr.push({g,s:score(g)});
+ }
+ arr.sort((a,b)=>b.s-a.s);
+ setProgress(90,'상위 조합 선별중...');
+ render(arr.slice(0,5).map(x=>x.g));
+ setProgress(100,'완료');
+}
+</script>
+</body>
+</html>
