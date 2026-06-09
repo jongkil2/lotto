@@ -1,1 +1,39 @@
+name: Update Lotto Data
 
+on:
+  schedule:
+    - cron: '0 21 * * 6'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  update-lotto:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Create data folder
+        run: mkdir -p data
+
+      - name: Generate lotto-history.json
+        run: |
+          echo '{
+            "updated":"auto",
+            "latestRound":0,
+            "draws":[]
+          }' > data/lotto-history.json
+
+      - name: Commit files
+        run: |
+          git config user.name "github-actions"
+          git config user.email "github-actions@github.com"
+
+          git add .
+
+          git diff --staged --quiet || git commit -m "Update lotto data"
+
+          git push
