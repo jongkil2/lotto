@@ -61,16 +61,8 @@ steps:
 
       os.makedirs("data", exist_ok=True)
 
-      with open(
-          "data/lotto-history.json",
-          "w",
-          encoding="utf-8"
-      ) as f:
-          json.dump(
-              output,
-              f,
-              ensure_ascii=False
-          )
+      with open("data/lotto-history.json", "w", encoding="utf-8") as f:
+          json.dump(output, f, ensure_ascii=False)
 
       print("saved", len(draws))
       EOF
