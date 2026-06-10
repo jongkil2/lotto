@@ -1,17 +1,12 @@
 name: Update Lotto Data
 
 on:
-workflow_dispatch:
-
-permissions:
-contents: write
+  workflow_dispatch:
 
 jobs:
-update:
-runs-on: ubuntu-latest
+  test:
+    runs-on: ubuntu-latest
 
-```
-steps:
-  - name: Hello
-    run: echo "Workflow OK"
-```
+    steps:
+      - name: Hello
+        run: echo "Workflow OK"
