@@ -26,7 +26,7 @@ jobs:
 
           draws = []
 
-          for drw in range(1,3000):
+          for drw in range(1,1300):
               try:
                   url = f"https://www.dhlottery.co.kr/common.do?method=getLottoNumber&drwNo={drw}"
 
@@ -50,8 +50,8 @@ jobs:
                       "bonus": data["bnusNo"]
                   })
 
-              except Exception as e:
-                  print(e)
+              except Exception:
+                  break
 
           draws = draws[-300:]
 
